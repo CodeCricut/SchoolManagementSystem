@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.DatabaseDriver;
-import model.Student;
+import model.Teacher;
 import util.NumberValidator;
 
 public class AdministratorLogin {
@@ -19,10 +19,11 @@ public class AdministratorLogin {
     private static Label teacherLoginLabel;
     private static TextField idField, passwordField;
     private static HBox buttonHBox;
-    private static Button loginButton;
+    private static Button loginButton, studentLoginButton;
 
     public static void display(){
         loginButton = new Button("Log In");
+        studentLoginButton = new Button("Student Login");
         buttonHBox = new HBox();
         idField = new TextField();
         passwordField = new TextField();
@@ -33,26 +34,32 @@ public class AdministratorLogin {
 
         // LOGIN BUTTON
         loginButton.setOnAction(event -> {
-            int id = -1;
-            if (NumberValidator.isInteger(idField.getText()))
-                id = Integer.parseInt(idField.getText());
+            if (NumberValidator.isInteger(idField.getText())) {
+                int id = Integer.parseInt(idField.getText());
+                Teacher teacher = DatabaseDriver.logTeacherIn(id, passwordField.getText());
+                if (teacher != null) {
+                    AdministratorView.display();
+                    stage.close();
+                }
+                else
+                    AlertBox.display("Error Logging In", "Password incorrect.");
+            }
             else
                 AlertBox.display("Login Error", "ID must be a positive integer.");
-            Student student = DatabaseDriver.logStudentIn(id, passwordField.getText());
-
-            if (student != null){
-                StudentView.setStudent(student);
-                StudentView.display();
-            }
         });
 
+        // STUDENT LOGIN
+        studentLoginButton.setOnAction(event -> {
+            StudentLogin.display();
+            stage.close();
+        });
 
         // BUTTON HBOX
         buttonHBox.getChildren().add(loginButton);
 
         // TEXT FIELDS
-        idField.setPromptText("Student ID");
-        passwordField.setPromptText("Student Password");
+        idField.setPromptText("Teacher ID");
+        passwordField.setPromptText("Teacher Password");
 
         // VBOX
         vBox.getChildren().addAll(teacherLoginLabel, idField, passwordField, loginButton);

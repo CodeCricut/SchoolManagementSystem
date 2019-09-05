@@ -19,10 +19,11 @@ public class StudentLogin {
     private static Label studentLoginLabel;
     private static TextField idField, passwordField;
     private static HBox buttonHBox;
-    private static Button loginButton;
+    private static Button loginButton, administratorLoginButton;
 
     public static void display(){
         loginButton = new Button("Log In");
+        administratorLoginButton = new Button("Administrator Login");
         buttonHBox = new HBox();
         idField = new TextField();
         passwordField = new TextField();
@@ -33,19 +34,22 @@ public class StudentLogin {
 
         // LOGIN BUTTON
         loginButton.setOnAction(event -> {
-            int id = -1;
-            if (NumberValidator.isInteger(idField.getText()))
-                id = Integer.parseInt(idField.getText());
-            else
-                AlertBox.display("Login Error", "ID must be a positive integer.");
-            Student student = DatabaseDriver.logStudentIn(id, passwordField.getText());
-
-            if (student != null){
+            if (NumberValidator.isInteger(idField.getText())){
+                int id = Integer.parseInt(idField.getText());
+                Student student = DatabaseDriver.logStudentIn(id, passwordField.getText());
                 StudentView.setStudent(student);
                 StudentView.display();
             }
+            else
+                AlertBox.display("Login Error", "ID must be a positive integer.");
+
         });
 
+        // TEACHER LOGIN
+        administratorLoginButton.setOnAction(event -> {
+            AdministratorLogin.display();
+            stage.close();
+        });
 
         // BUTTON HBOX
         buttonHBox.getChildren().add(loginButton);
@@ -55,7 +59,7 @@ public class StudentLogin {
         passwordField.setPromptText("Student Password");
 
         // VBOX
-        vBox.getChildren().addAll(studentLoginLabel, idField, passwordField, loginButton);
+        vBox.getChildren().addAll(studentLoginLabel, idField, passwordField, loginButton, administratorLoginButton);
 
         // SCENE
 

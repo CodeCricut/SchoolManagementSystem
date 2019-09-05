@@ -32,8 +32,8 @@ public class AddTeacher {
         stage = new Stage();
 
         // BUTTON
-        addTeacherButton.setOnAction(event -> DatabaseDriver.addTeacher(nameField.getText(),
-                emailField.getText(), Integer.parseInt(schoolIDField.getText())));
+        //addTeacherButton.setOnAction(event -> DatabaseDriver.addTeacher(nameField.getText(),
+         //       emailField.getText(), Integer.parseInt(schoolIDField.getText())));
 
         // FIELDS
         nameField.setPromptText("Teacher Name");

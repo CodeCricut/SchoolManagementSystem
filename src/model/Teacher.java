@@ -3,15 +3,18 @@ package model;
 public class Teacher {
 
     private int id;
-    private int schoolID;
+    private School school;
     private String name;
     private String email;
+    private String password;
 
-    Teacher(int id, int schoolID, String name, String email){
+    Teacher(int id, School school, String name, String email,
+            String password){
         this.id = id;
-        this.schoolID = schoolID;
+        this.school = school;
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
     public int getId() {
@@ -23,11 +26,11 @@ public class Teacher {
     }
 
     public int getSchoolID() {
-        return schoolID;
+        return school.getId();
     }
 
     public void setSchoolID(int schoolID) {
-        this.schoolID = schoolID;
+        this.school.setId(schoolID);
     }
 
     public String getName() {
@@ -44,5 +47,21 @@ public class Teacher {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public School getSchool() {
+        return school;
+    }
+
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -77,11 +77,11 @@ public class DatabaseDriver {
             ResultSet teacherResult = getTeacher.executeQuery();
             teacherResult.next();
 
-            int schoolID = teacherResult.getInt("school_id");
+            School school = getSchoolByID(teacherResult.getInt("school_id"));
             String name = teacherResult.getString("name");
             String email = teacherResult.getString("email");
 
-            return new Teacher(id, schoolID, name, email);
+            return new Teacher(id, school, name, email, "");
         } catch (SQLException e) {
             e.printStackTrace();
             AlertBox.display("Error getting teacher by id", "Error");
@@ -506,14 +506,15 @@ public class DatabaseDriver {
         }
     }
 
-    public static void addTeacher(String name, String email, int schoolID) {
+    public static void addTeacher(String name, String password, String email, int schoolID) {
         try {
             CallableStatement addteacher = connection.prepareCall(
-                    "{CALL add_teacher(?,?,?)}"
+                    "{CALL add_teacher(?,?,?,?)}"
             );
             addteacher.setString(1, name);
             addteacher.setString(2, email);
             addteacher.setInt(3, schoolID);
+            addteacher.setString(4, password);
 
             addteacher.execute();
         } catch (SQLException e) {
@@ -673,6 +674,31 @@ public class DatabaseDriver {
         }
     }
 
+    public static Teacher logTeacherIn(int teacherID, String password) {
+        try {
+            CallableStatement getTeacher = connection.prepareCall(
+                    "{CALL get_teacher_by_id(?)}"
+            );
+            getTeacher.setInt(1, teacherID);
+
+            ResultSet teacherResult = getTeacher.executeQuery();
+            teacherResult.next();
+
+            if (!teacherResult.getString("password").equals(password)) {
+                AlertBox.display("Login Error", "Incorrect username or password.");
+                return null;
+            }
+            School school = getSchoolByID(teacherResult.getInt("school_id"));
+            String name = teacherResult.getString("name");
+            String email = teacherResult.getString("email");
+
+            return new Teacher(teacherID, school, name, email, password);
+        } catch (SQLException e) {
+            AlertBox.display("Login Error", "Error logging teacher in.");
+            e.printStackTrace();
+            return null;
+        }
+    }
     public static void enrollStudentToClass(int studentID, int teacherID, int classID) {
         try {
             CallableStatement enrollStudent = connection.prepareCall(
